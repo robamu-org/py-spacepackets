@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import abstractmethod
-from typing import Optional
+from typing import Optional, Tuple
 import enum
 import struct
 
@@ -77,7 +77,7 @@ class PrimaryHeaderBase:
         raw_packet: bytes,
         truncated: bool = False,
         uslp_version: int = USLP_VERSION_NUMBER,
-    ) -> (int, SourceOrDestField, int, int):
+    ) -> Tuple[int, SourceOrDestField, int, int]:
         if len(raw_packet) < 4:
             raise UslpInvalidRawPacketOrFrameLen
         version_number = (raw_packet[0] & 0xF0) >> 4
@@ -88,7 +88,7 @@ class PrimaryHeaderBase:
             | (raw_packet[1] << 4)
             | ((raw_packet[2] & 0xF0) >> 4)
         )
-        src_dest = (raw_packet[2] & 0x08) >> 3
+        src_dest = SourceOrDestField((raw_packet[2] & 0x08) >> 3)
         vcid = ((raw_packet[2] & 0b111) << 3) | ((raw_packet[3] >> 5) & 0b111)
         map_id = (raw_packet[3] >> 1) & 0b1111
         end_of_frame_primary_header = raw_packet[3] & 0b1

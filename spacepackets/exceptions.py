@@ -8,3 +8,8 @@ class BytesTooShortError(ValueError):
         )
         self.expected_len = expected_len
         self.bytes_len = bytes_len
+
+
+class InvalidCrcCcitt16(Exception):
+    def __init__(self, data: bytes):
+        self.data = data
